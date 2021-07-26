@@ -68,7 +68,7 @@ const Customer = () => {
 
   return (
     <div>
-      <h1>Customers Page</h1>
+      <h1>Customers Page - Orders and prices available</h1>
       
       <form onSubmit={addCustomer}>
         Name: <input value={newName} onChange={handleNameChange}/>
