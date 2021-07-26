@@ -6,6 +6,8 @@ import Home from './components/Home'
 import Customer from './components/Customer'
 import Menu from './components/Menu'
 
+import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
+
 const App = () => {
 
   const padding = {
@@ -19,6 +21,8 @@ const App = () => {
         <Link style={padding} to="/customers">Customers</Link>
         <Link style={padding} to="/menu">Menu Set</Link>
       </div>
+
+      <AmplifySignOut />
 
       <Switch>
         <Route path="/menu">
@@ -35,4 +39,5 @@ const App = () => {
   )
 }
 
-export default App
+// export default App
+export default withAuthenticator(App);
