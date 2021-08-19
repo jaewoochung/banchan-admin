@@ -15,27 +15,30 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/">Home</Link>
-        <Link style={padding} to="/customers">Customers</Link>
-        <Link style={padding} to="/menu">Menu Set</Link>
-      </div>
+    <div>
+      <Router>
+        <div>
+          <Link style={padding} to="/">Home</Link>
+          <Link style={padding} to="/customers">Customers</Link>
+          <Link style={padding} to="/menu">Menu Set</Link>
+        </div>
 
+
+        <Switch>
+          <Route path="/menu">
+            <Menu />
+          </Route>
+          <Route path="/customers">
+            <Customer />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </Router>
+      <p style={ {marginBottom: 60} }></p>
       <AmplifySignOut />
-
-      <Switch>
-        <Route path="/menu">
-          <Menu />
-        </Route>
-        <Route path="/customers">
-          <Customer />
-        </Route>
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
-    </Router>
+    </div>
   )
 }
 

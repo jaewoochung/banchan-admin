@@ -1,101 +1,83 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { API } from 'aws-amplify'
+// import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
+import { listCustomers } from '../graphql/queries'
+// import { createCustomer as createCustomerMutation, deleteCustomer as deleteCustomerMutation } from '../graphql/mutations'
+import * as mutations from '../graphql/mutations'
 
-const customers = [
-  {
-    name: "지아",
-    number: "781-859-9940",
-    address: "365 Trapelo Road, Belmont MA",
-    order: true,
-    price: 100,
-    delivery: "윤미선"
-  },
-  {
-    name: "도현",
-    number: "617-233-1299",
-    address: "123 Highland Ave, Arlington MA",
-    order: true,
-    price: 100,
-    delivery: "윤미선"
-  },
-  {
-    name: "서준",
-    number: "781-316-2440",
-    address: "99 Brookline Road, Brookline MA",
-    order: false,
-    price: 125,
-    delivery: "신동숙"
-  },
-  {
-    name: "민준",
-    number: "781-490-6381",
-    address: "44 Chestnut Lane, Boston MA",
-    order: true,
-    price: 115,
-    delivery: "정면수"
-  }
-]
-const Customer = () => {
-  const [newName, setNewName] = useState('')
-  const [newAddress, setNewAddress] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+const initialFormState = {
+  name: '',
+  number: '',
+  address: ''
+}
 
-  const handleNameChange = (event) => {
-    console.log(event.target.value)
-    setNewName(event.target.value)
-  }
-  const handleAddressChange = (event) => {
-    console.log(event.target.value)
-    setNewAddress(event.target.value)
-  }
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
+// const Customer = () => {
+function Customer() {
+  const [customers, setCustomers] = useState([])
+  const [formData, setFormData] = useState(initialFormState)
+
+  useEffect(() => {
+    fetchCustomers()
+  }, [])
+
+  async function fetchCustomers() {
+    const apiData = await API.graphql({ query: listCustomers })
+    setCustomers(apiData.data.listCustomers.items)
   }
 
-  const addCustomer = (event) => {
-    event.preventDefault()
-    const customerObject = {
-      name: newName,
-      number: newNumber,
-      address: newAddress,
-      order: false,
-      price: 0,
-      delivery: "",
-      id: customers.length + 1,
-    }
+  async function createCustomer() {
+    // if (!formData.name || !formData.address || !formData.number) return
+    console.log("create Customer")
+    // await API.graphql({ query: createCustomerMutation, variables: { input: formData } })
 
-    console.log(customerObject)
+    await API.graphql({ query: mutations.createCustomer, variables: { input: formData} })
+
+    console.log("got after the await")
+
+    setCustomers([ ...customers, formData ])
+    console.log(customers)
+    setFormData(initialFormState)
   }
+
+  async function deleteCustomer({ id }) {
+    const newCustomersArray = customers.filter(note => note.id !== id)
+    setCustomers(newCustomersArray)
+    await API.graphql({ query: mutations.deleteCustomer, variables: { input: { id } }})
+  }
+
 
   return (
     <div>
       <h1>Customers Page - Orders and prices available</h1>
       
-      <form onSubmit={addCustomer}>
-        Name: <input value={newName} onChange={handleNameChange}/>
-        <br></br>
-        Address: <input value={newAddress} onChange={handleAddressChange}/>
-        <br></br>
-        Phone Number: <input value={newNumber} onChange={handleNumberChange}/>
-        <button type="submit">Add</button>
-        <br></br>
-      </form>
+      <input
+        onChange = { e => setFormData({ ...formData, 'name': e.target.value})}
+        placeholder="Customer Name"
+        value = {formData.name}
+      />
+      <input
+        onChange = { e => setFormData({ ...formData, 'number': e.target.value})}
+        placeholder = "Phone Number"
+        value = {formData.number}
+      />
+      <input
+        onChange = { e => setFormData({ ...formData, 'address': e.target.value})}
+        placeholder = "Address"
+        value = {formData.address}
+      />
+      <button onClick={createCustomer}>Create Customer</button>
 
       {
-        customers.map((customer) => {
-          return (
+        customers.map(customer => (
             <div>
-              Name: {customer.name} <br></br>
-              Number: {customer.number} <br></br>
-              Address: {customer.address} <br></br>
-              Price: ${customer.price} <br></br>
-              Delivery: {customer.delivery} <br></br>
-              <br></br>
+              <h3>{customer.name}</h3>
+              <p>Number: {customer.number}</p>
+              <p>Address: {customer.address}</p>
+              <button onClick={() => deleteCustomer(customer)}>Delete Customer</button>
             </div>
-          )
-        })
+        ))
       }
     </div>
-    
   )
 }
 
