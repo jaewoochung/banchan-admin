@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { API } from 'aws-amplify'
-// import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
-import { listCustomers } from '../graphql/queries'
-// import { createCustomer as createCustomerMutation, deleteCustomer as deleteCustomerMutation } from '../graphql/mutations'
+import { getCustomer, listCustomers } from '../graphql/queries'
 import * as mutations from '../graphql/mutations'
+import { createCustomer as createCustomerMutation } from '../graphql/mutations'
+
+import Amplify, { Auth } from 'aws-amplify';
 
 const initialFormState = {
   name: '',
   number: '',
-  address: ''
+  address: '',
+  deliverer: '',
+  price: 100,
+  wednesdayOrder: false,
+  saturdayOrder: false
 }
 
-// const Customer = () => {
 function Customer() {
   const [customers, setCustomers] = useState([])
   const [formData, setFormData] = useState(initialFormState)
@@ -26,23 +30,61 @@ function Customer() {
   }
 
   async function createCustomer() {
-    // if (!formData.name || !formData.address || !formData.number) return
-    console.log("create Customer")
-    // await API.graphql({ query: createCustomerMutation, variables: { input: formData } })
+    // await API.graphql({ query: mutations.createCustomer, variables: { input: formData} })
+    await API.graphql({ query: createCustomerMutation, variables: { input: formData } });
 
-    await API.graphql({ query: mutations.createCustomer, variables: { input: formData} })
-
-    console.log("got after the await")
-
-    setCustomers([ ...customers, formData ])
-    console.log(customers)
+    // setCustomers([ ...customers, formData ])
     setFormData(initialFormState)
+    const apiData = await API.graphql({ query: listCustomers })
+
+    console.log(apiData.data.listCustomers.items)
+    setCustomers(apiData.data.listCustomers.items)
+    const session = await Auth.currentSession()
+    console.log(customers)
   }
 
   async function deleteCustomer({ id }) {
     const newCustomersArray = customers.filter(note => note.id !== id)
     setCustomers(newCustomersArray)
     await API.graphql({ query: mutations.deleteCustomer, variables: { input: { id } }})
+  }
+
+  async function saturdayOrder({ id }) {
+    const customerData = await API.graphql({ query: getCustomer, variables: { id: id} })
+    const updatedCustomer = {
+      id: customerData.data.getCustomer.id,
+      name: customerData.data.getCustomer.name,
+      number: customerData.data.getCustomer.number,
+      address: customerData.data.getCustomer.address,
+      deliverer: customerData.data.getCustomer.deliverer,
+      price: customerData.data.getCustomer.price,
+      wednesdayOrder: customerData.data.wednesdayOrder,
+      saturdayOrder: true
+    }
+    await API.graphql({ query: mutations.updateCustomer, variables: { input: updatedCustomer } })
+    alert("added to saturday Orders!")
+  }
+
+  async function wednesdayOrder({ id }) {
+    const customerData = await API.graphql({ query: getCustomer, variables: { id: id} })
+    const updatedCustomer = {
+      id: customerData.data.getCustomer.id,
+      name: customerData.data.getCustomer.name,
+      number: customerData.data.getCustomer.number,
+      address: customerData.data.getCustomer.address,
+      deliverer: customerData.data.getCustomer.deliverer,
+      price: customerData.data.getCustomer.price,
+      wednesdayOrder: true,
+      saturdayOrder: customerData.data.saturdayOrder
+    }
+    await API.graphql({ query: mutations.updateCustomer, variables: { input: updatedCustomer } })
+    alert("added to wednesday orders")
+  }
+
+  async function logInfo($id) {
+    console.log($id.id)
+    // const apiCustomer = await API.graphql({ query: getCustomer, variables: { id: id} })
+    // console.log(apiCustomer.data.getCustomer)
   }
 
 
@@ -73,7 +115,13 @@ function Customer() {
               <h3>{customer.name}</h3>
               <p>Number: {customer.number}</p>
               <p>Address: {customer.address}</p>
+              <p>Deliverer: {customer.deliverer}</p>
+              <p>Price: {customer.price}</p>
+
+              <button onClick={() => wednesdayOrder(customer)}>Wednesday Order</button>
+              <button onClick={() => saturdayOrder(customer)}>Saturday Order</button>
               <button onClick={() => deleteCustomer(customer)}>Delete Customer</button>
+              <button onClick={() => logInfo(customer)}>Log</button>
             </div>
         ))
       }

@@ -11,6 +11,10 @@ export const createCustomer = /* GraphQL */ `
       name
       address
       number
+      deliverer
+      price
+      wednesdayOrder
+      saturdayOrder
       createdAt
       updatedAt
     }
@@ -26,6 +30,10 @@ export const updateCustomer = /* GraphQL */ `
       name
       address
       number
+      deliverer
+      price
+      wednesdayOrder
+      saturdayOrder
       createdAt
       updatedAt
     }
@@ -41,6 +49,55 @@ export const deleteCustomer = /* GraphQL */ `
       name
       address
       number
+      deliverer
+      price
+      wednesdayOrder
+      saturdayOrder
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createMenuItem = /* GraphQL */ `
+  mutation CreateMenuItem(
+    $input: CreateMenuItemInput!
+    $condition: ModelMenuItemConditionInput
+  ) {
+    createMenuItem(input: $input, condition: $condition) {
+      id
+      name
+      servingSize
+      weeklyMenu
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateMenuItem = /* GraphQL */ `
+  mutation UpdateMenuItem(
+    $input: UpdateMenuItemInput!
+    $condition: ModelMenuItemConditionInput
+  ) {
+    updateMenuItem(input: $input, condition: $condition) {
+      id
+      name
+      servingSize
+      weeklyMenu
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteMenuItem = /* GraphQL */ `
+  mutation DeleteMenuItem(
+    $input: DeleteMenuItemInput!
+    $condition: ModelMenuItemConditionInput
+  ) {
+    deleteMenuItem(input: $input, condition: $condition) {
+      id
+      name
+      servingSize
+      weeklyMenu
       createdAt
       updatedAt
     }

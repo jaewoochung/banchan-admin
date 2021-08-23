@@ -1,6 +1,17 @@
 type Customer @model {
-  id: ID!
+  id: ID
   name: String!
   address: String!
-  number: String
+  number: String!
+  deliverer: String!
+  price: Int!
+  wednesdayOrder: Boolean!
+  saturdayOrder: Boolean
+}
+
+type MenuItem @model {
+  id: ID!
+  name: String!
+  servingSize: String!
+  weeklyMenu: Boolean
 }
