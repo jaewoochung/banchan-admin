@@ -4,8 +4,6 @@ import { getCustomer, listCustomers } from '../graphql/queries'
 import * as mutations from '../graphql/mutations'
 import { createCustomer as createCustomerMutation } from '../graphql/mutations'
 
-import Amplify, { Auth } from 'aws-amplify';
-
 const initialFormState = {
   name: '',
   number: '',
@@ -19,6 +17,7 @@ const initialFormState = {
 function Customer() {
   const [customers, setCustomers] = useState([])
   const [formData, setFormData] = useState(initialFormState)
+  const [price, setPrice] = useState()
 
   useEffect(() => {
     fetchCustomers()
@@ -39,7 +38,6 @@ function Customer() {
 
     console.log(apiData.data.listCustomers.items)
     setCustomers(apiData.data.listCustomers.items)
-    const session = await Auth.currentSession()
     console.log(customers)
   }
 
@@ -87,6 +85,24 @@ function Customer() {
     // console.log(apiCustomer.data.getCustomer)
   }
 
+  async function toggleDelivery(id, deliverer) {
+    console.log(deliverer)
+    console.log(id)
+    const customerData = await API.graphql({ query: getCustomer, variables: { id: id} })
+    const updatedCustomer = {
+      id: customerData.data.getCustomer.id,
+      name: customerData.data.getCustomer.name,
+      number: customerData.data.getCustomer.number,
+      address: customerData.data.getCustomer.address,
+      deliverer: deliverer,
+      price: customerData.data.getCustomer.price,
+      wednesdayOrder: customerData.data.getCustomer.wednesdayOrder,
+      saturdayOrder: customerData.data.saturdayOrder
+    }
+    await API.graphql({ query: mutations.updateCustomer, variables: { input: updatedCustomer }})
+    const apiData = await API.graphql({ query: listCustomers })
+    setCustomers(apiData.data.listCustomers.items)
+  }
 
   return (
     <div>
@@ -116,8 +132,10 @@ function Customer() {
               <p>Number: {customer.number}</p>
               <p>Address: {customer.address}</p>
               <p>Deliverer: {customer.deliverer}</p>
+              <button onClick={() => toggleDelivery(customer.id, "Misun")}>Misun</button>
+              <button onClick={() => toggleDelivery(customer.id, "Myunsoo")}>Myunsoo</button>
+              <button onClick={() => toggleDelivery(customer.id, "Dongsook")}>Dongsook</button>
               <p>Price: {customer.price}</p>
-
               <button onClick={() => wednesdayOrder(customer)}>Wednesday Order</button>
               <button onClick={() => saturdayOrder(customer)}>Saturday Order</button>
               <button onClick={() => deleteCustomer(customer)}>Delete Customer</button>

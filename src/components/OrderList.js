@@ -28,12 +28,20 @@ function OrderList() {
   if (date <= 4) {
     return (
       <div>
-        <p>Wednesday Order</p>
-        <h4>Total orders: {customers.filter(customer => customer.wednesdayOrder).length}</h4>
+        <h3>
+          Wednesday Order <br/>
+          Total orders: {customers.filter(customer => customer.wednesdayOrder).length}
+        </h3>
         {
           customers.filter(customer => customer.wednesdayOrder).map(filteredCustomer => (
             <div>
-              {filteredCustomer.name}
+              <strong>{filteredCustomer.name}</strong>
+              <br></br>
+              {filteredCustomer.address}
+              <br/>
+              ${filteredCustomer.price}
+              <br></br>
+              <br/>
             </div>
           ))
         }

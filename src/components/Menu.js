@@ -80,6 +80,7 @@ function Menu () {
               <button onClick={() => deleteMenuItem(item)}>Delete</button>
               <button onClick={() => logInfo(item)}>Log</button>
               <br></br>
+              <br></br>
             </div>
           )
         })

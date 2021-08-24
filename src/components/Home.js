@@ -6,23 +6,23 @@ import OrderList from './OrderList'
 function Home () {
   const [items, setItems] = useState([])
   const [customerList, setCustomers] = useState([])
-  const [date, setDate] = useState(0)
+  // const [date, setDate] = useState(0)
   // returning a filtered array of only important values or showing all
 
   useEffect(() => {
     fetchMenuItems()
     fetchCustomers()
-    fetchDate()
+    // fetchDate()
   }, [])
 
-  async function fetchDate() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-    var dayOfTheWeek = new Date(mm + " " + dd + ", " + yyyy)
-    setDate(dayOfTheWeek.getDay())
-  }
+  // async function fetchDate() {
+  //   var today = new Date();
+  //   var dd = String(today.getDate()).padStart(2, '0');
+  //   var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  //   var yyyy = today.getFullYear();
+  //   var dayOfTheWeek = new Date(mm + " " + dd + ", " + yyyy)
+  //   setDate(dayOfTheWeek.getDay())
+  // }
 
   async function fetchCustomers() {
     const apiData = await API.graphql({ query: listCustomers})
@@ -47,7 +47,6 @@ function Home () {
       }
 
       <br></br>
-      <h4>Orders</h4>
       <OrderList />
       <br></br>
     </div>
