@@ -17,7 +17,7 @@ const initialFormState = {
 function Customer() {
   const [customers, setCustomers] = useState([])
   const [formData, setFormData] = useState(initialFormState)
-  const [price, setPrice] = useState()
+  // const [prices, setPrice] = useState()
 
   useEffect(() => {
     fetchCustomers()

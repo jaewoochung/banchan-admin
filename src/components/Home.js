@@ -1,56 +1,126 @@
-import React, { useState, useEffect } from 'react'
-import { API } from 'aws-amplify'
-import { listMenuItems, listCustomers } from '../graphql/queries'
-import OrderList from './OrderList'
+import {
+  Box,
+  Container,
+  Grid
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+
+import {
+} from '@material-ui/core';
+import TotalCustomers from './TotalCustomers'
+import TotalOrders from './TotalOrders'
+import TotalProfits from './TotalProfits'
+import HomeMenuList from './HomeMenuList'
+import LatestCustomers from './LatestCustomers'
+
+const DashboardLayoutRoot = makeStyles({
+  root: {
+    backgroundColor: 'background.default',
+    display: 'flex',
+    height: '100%',
+    overflow: 'hidden',
+    width: '100%'
+  },
+});
+
+const DashboardLayoutWrapper = makeStyles({
+  wrapper: {
+    display: 'flex',
+    flex: '1 1 auto',
+    overflow: 'hidden',
+    paddingTop: 64,
+    
+  }
+})
+
+const DashboardLayoutContainer = makeStyles({
+  container: {
+    display: 'flex',
+    flex: '1 1 auto',
+    overflow: 'hidden'
+  }
+})
+
+const DashboardLayoutContent = makeStyles({
+  content: {
+    flex: '1 1 auto',
+    height: '100%',
+    overflow: 'auto'
+  }
+})
+
 
 function Home () {
-  const [items, setItems] = useState([])
-  const [customerList, setCustomers] = useState([])
-  // const [date, setDate] = useState(0)
-  // returning a filtered array of only important values or showing all
-
-  useEffect(() => {
-    fetchMenuItems()
-    fetchCustomers()
-    // fetchDate()
-  }, [])
-
-  // async function fetchDate() {
-  //   var today = new Date();
-  //   var dd = String(today.getDate()).padStart(2, '0');
-  //   var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  //   var yyyy = today.getFullYear();
-  //   var dayOfTheWeek = new Date(mm + " " + dd + ", " + yyyy)
-  //   setDate(dayOfTheWeek.getDay())
-  // }
-
-  async function fetchCustomers() {
-    const apiData = await API.graphql({ query: listCustomers})
-    setCustomers(apiData.data.listCustomers.items)
-  }
-
-  async function fetchMenuItems() {
-    const apiData = await API.graphql({ query: listMenuItems})
-    setItems(apiData.data.listMenuItems.items)
-  }
-
   return (
-    <div>
-      <h1>Home Page</h1>
-      <h3>Food Menu</h3>
-      {
-        items.filter(item => item.weeklyMenu).map(filteredMenu => (
-          <div>
-            {filteredMenu.name} - {filteredMenu.servingSize}
+     <div className = {DashboardLayoutRoot.root}>
+       <div className={DashboardLayoutWrapper.wrapper}>
+         <div className={DashboardLayoutContainer.container}>
+           <div className={DashboardLayoutContent.content}>
+            <Box 
+              sx={{
+                backgroundColor: 'background.default',
+                minHeight: '100%',
+                py: 12,
+              }}
+            >
+              <Container maxWidth={false}>
+                <Grid sx={{ pl: 32, pr: 0}}
+                  container
+                  spacing={3}
+                >
+                  <Grid item lg={3}
+                    sm={6}
+                    xl={3}
+                    xs={12}
+                  >
+                    <TotalCustomers/>
+                  </Grid>
+                  <Grid item lg={3}
+                    sm={6}
+                    xl={3}
+                    xs={12}
+                  >
+                    <TotalOrders/>
+                  </Grid>
+                  <Grid item lg={3}
+                    sm={6}
+                    xl={3}
+                    xs={12}
+                  >
+                    <TotalProfits/>
+                  </Grid>
+                  <Grid item lg={3}
+                    sm={6}
+                    xl={3}
+                    xs={12}
+                  >
+                    <TotalCustomers/>
+                  </Grid>
+                  <Grid
+                    item
+                    lg={4}
+                    // md={6}
+                    // xl={3}
+                    xs={12}
+                  >
+                    <HomeMenuList sx={{ bgcolor: 'white', height: '100%' }} />
+                  </Grid>
+                  <Grid
+                    item
+                    lg={8}
+                    // md={12}
+                    // xl={9}
+                    xs={12}
+                  >
+                    <LatestCustomers sx={{ height: '100%' }} />
+                  </Grid>
+                </Grid>
+              </Container>
+            </Box>
+            </div>
           </div>
-        ))
-      }
-
-      <br></br>
-      <OrderList />
-      <br></br>
-    </div>
-    
+        </div>
+     </div>
   )
 }
 

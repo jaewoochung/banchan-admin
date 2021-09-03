@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { API } from 'aws-amplify'
-import { getCustomer, listCustomers } from '../graphql/queries'
+import { listCustomers } from '../graphql/queries'
 
 function OrderList() {
   const [date, setDate] = useState(0)

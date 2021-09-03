@@ -1,61 +1,44 @@
+import * as React from 'react'
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from '@material-ui/core';
+import theme from './theme'
 import {
-  BrowserRouter as Router,
-  Switch, Route, Link
+  Switch, Route,
 } from "react-router-dom"
 import Home from './components/Home'
-import Customer from './components/Customer'
-import Menu from './components/Menu'
-import MisunCustomers from './components/MisunCustomers'
-import DongsookCustomers from './components/DongsookCustomers'
-import MyunsooCustomers from './components/MyunsooCustomers'
+import CustomerList from './pages/CustomerList'
+import MenuList from './pages/MenuList'
+import DashboardNavbar from './components/DashboardNavbar'
+import DashboardSidebar from './components/DashboardSidebar';
 
 import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
 
 const App = () => {
-
-  const padding = {
-    padding: 5
-  }
-
   return (
-    <div>
-      <Router>
-        <div>
-          <Link style={padding} to="/">Home</Link>
-          <Link style={padding} to="/customers">Customers</Link>
-          <Link style={padding} to="/menu">Menu Set</Link>
-          <Link style={padding} to="/misun">Misun</Link>
-          <Link style={padding} to="/dongsook">Dongsook</Link>
-          <Link style={padding} to="/myunsoo">Myunsoo</Link>
-        </div>
-
-
-        <Switch>
-          <Route path="/misun">
-            <MisunCustomers />
-          </Route>
-          <Route path="/dongsook">
-            <DongsookCustomers />
-          </Route>
-          <Route path="/myunsoo">
-            <MyunsooCustomers />
-          </Route>
-          <Route path="/menu">
-            <Menu />
-          </Route>
-          <Route path="/customers">
-            <Customer />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </Router>
-      <p style={ {marginBottom: 60} }></p>
+      <ThemeProvider theme={theme}>
+        {/* <Box> */}
+          <DashboardNavbar />
+          <BrowserRouter>
+            <DashboardSidebar />
+            <Switch>
+              <Route path="/menu">
+                <MenuList />
+              </Route>
+              <Route path="/customers">
+                {/* <Customer /> */}
+                <CustomerList />
+              </Route>
+              <Route path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </BrowserRouter>
+        {/* </Box> */}
       <AmplifySignOut />
-    </div>
+
+      </ThemeProvider>
   )
 }
 
-// export default App
 export default withAuthenticator(App);

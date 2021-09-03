@@ -7,7 +7,7 @@ const initialFormState = {
   name: '',
   servingSize: '',
   weeklyMenu: false
-  }
+}
 
 function Menu () {
   const [items, setItems] = useState([])
